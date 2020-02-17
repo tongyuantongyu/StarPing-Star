@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}StarPing - {{target_sname}}{% end %}
+
+{% block nav %}
+<a id="nav-l1" href="/group/{{group_name}}" class="breadcrumb bold-font">{{group_sname}}</a>
+<a id="nav-l2" href="#" class="breadcrumb">{{target_sname}}</a>
+{% end %}
+
+{% block body %}
+<div style="height: 16px"></div>
+<div class="row" style="margin-bottom: 0">
+    <div id="chart" class="col s12 auto-ratio"></div>
+</div>
+<div class="row" style="margin-bottom: 0">
+    <div id="span-select-container" class="input-field col s9 m4 l3">
+        <select id="show-span">
+            <option value="1" selected>1 Day</option>
+            <option value="3">3 Days</option>
+            <option value="7">7 Days</option>
+            <option value="30">30 Days</option>
+        </select>
+        <label for="show-span">Select Span</label>
+    </div>
+    <div class="col s3 m2 l1" style="transform: translate(10px, 40%)">
+        <a class="btn-floating waves-effect waves-light"
+           onclick="switchNode('{{target_name}}', '{{target_sname}}', null, null)"><i class="material-icons">search</i></a>
+    </div>
+    <div class="col l2 offset-l4 m3 s6 jump-button">
+        <a class='dropdown-trigger btn waves-effect waves-light tooltipped' href='#' data-target='dropdown1'
+           style='display:block' data-position="top" data-tooltip="Choose Node">
+            Node<i class="material-icons right">list</i>
+        </a>
+        <ul id='dropdown1' class='dropdown-content'>
+            {% for name in nodelist %}
+            <li><a href="#"
+                   onclick="switchNode('{{target_name}}', '{{target_sname}}', '{{name}}', '{{nodes[name][2]}}')">
+                {{nodes[name][2]}}
+            </a></li>
+            {% end %}
+        </ul>
+    </div>
+    <div class="col l2 m3 s6 jump-button">
+        <a class="waves-effect waves-light btn tooltipped" style='display:block' href="#" onclick="toRoute()"
+           data-position="top" data-tooltip="Check Target MTR">
+            Route<i class="material-icons right">open_in_new</i>
+        </a>
+    </div>
+</div>
+{% end %}
+
+{% block extra_js %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts.min.js"></script>
+<script type="text/javascript" src="/files/charts.js"></script>
+{% end %}
+
+{% block extra_init %}
+let showing_node = '{{next(iter(nodelist))}}';
+let showing_node_sname = '{{nodes[next(iter(nodelist))][2]}}'
+let chartInstance;
+let intervalID;
+$(document).ready(function(){
+let a = setChartDetail("chart", null, null, '{{target_name}}', '{{target_sname}}', showing_node, showing_node_sname, 1);
+intervalID = a[0];
+chartInstance = a[1];
+});
+
+function switchNode(target_name, target_sname, node_name, node_sname) {
+if (node_name == null) {
+node_name = showing_node;
+node_sname = showing_node_sname;
+}
+let span = document.getElementById("show-span").value;
+let a = setChartDetail("chart", chartInstance, intervalID, target_name, target_sname, node_name, node_sname, span);
+intervalID = a[0];
+chartInstance = a[1];
+showing_node = node_name;
+showing_node_sname = node_sname;
+}
+
+function toRoute() {
+window.location = "/route/{{group_name}}/{{target_name}}/" + showing_node;
+}
+{% end %}

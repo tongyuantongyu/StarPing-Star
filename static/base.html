@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+{% autoescape xhtml_escape %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}StarPing{% end %}</title>
+    <link rel="icon" type="image/svg+xml" href="/files/icon.svg">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/files/style.css"/>
+    <link type="text/css" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+<header>
+<nav class="nav-bar">
+    <a href="#" data-target="slide-out" class="top-nav sidenav-trigger full hide-on-large-only">
+        <i class="material-icons">menu</i>
+    </a>
+    <div class="row">
+        <div class="col s1"></div>
+        <div class="col s10 truncate">
+            {% block nav %}
+            <a id="nav-l1" href="#" class="breadcrumb bold-font"> </a>
+            {% end %}
+        </div>
+    </div>
+</nav>
+<ul id="slide-out" class="sidenav sidenav-fixed side-nav sidenav-collapsible leftside-navigation collapsible collapsible-accordion no-margin no-border">
+    <li class="name-box center background">
+        <br><b style="font-size: 100px">💫</b><br>
+        <span class="white-text name">StarPing</span>
+    </li>
+    {% for groupv1_title, groupv1_items in groups.items() %}
+    <li class="level1-tag">
+        <a class="collapsible-header waves-effect waves-light bold">{{groupv1_title}}</a>
+        <div class="collapsible-body">
+            <ul>
+                {% for groupv2 in groupv1_items %}
+                <li>
+                    <a class="level2-tag" href="/group/{{groupv2}}">{{group_names[groupv2]}}</a>
+                </li>
+                {% end %}
+            </ul>
+        </div>
+    </li>
+    {% end %}
+    <li class="level1-tag">
+        <a class="waves-effect waves-light bold" style="padding: 0 16px; color: #555">About</a>
+    </li>
+</ul>
+</header>
+<main>
+    <div class="container">
+        {% block body %}
+        !! BASE TO BE FILLED !!
+        {% end %}
+    </div>
+</main>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+{% block extra_js %}
+{% end %}
+<script type="text/javascript">
+    function goBack() {
+        window.history.back();
+    }
+    $(document).ready(function(){
+        $('.collapsible').collapsible();
+        $('.dropdown-trigger').dropdown();
+        $('select').formSelect();
+        $('.sidenav').sidenav();
+        $('.tooltipped').tooltip();
+        if ($(window).width() > 600) {
+            $('.jump-button').css('transform', 'translateY(50%)');
+            $('#span-select-container').css('margin-bottom', '0');
+        }
+    });
+    {% block extra_init %}
+    {% end %}
+</script>
+</body>
+</html>

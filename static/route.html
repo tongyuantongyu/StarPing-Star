@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}StarPing - {{target_sname}} From {{node_sname}}{% end %}
+
+{% block nav %}
+<a id="nav-l1" href="/group/{{group_name}}" class="breadcrumb bold-font">{{group_sname}}</a>
+<a id="nav-l2" href="/target/{{group_name}}/{{target_name}}" class="breadcrumb">{{target_sname}}</a>
+<a id="nav-l3" href="#" class="breadcrumb thin-font">{{node_sname}}</a>
+{% end %}
+
+{% block body %}
+<div style="height: 16px"></div>
+<h5 class="header">Search MTR Record After:</h5>
+<div class="row">
+    <div class="col s12 m12 l5">
+        <div class="input-field">
+        <label for="record-date">Record Date</label>
+        <input id="record-date" type="text" class="datepicker">
+        </div>
+    </div>
+    <div class="col s6 m6 l5">
+        <div class="input-field">
+        <label for="record-time">Record Time</label>
+        <input id="record-time" type="text" class="timepicker">
+        </div>
+    </div>
+    <div class="col s6 m6 l2" style="margin-top:25px">
+        <a id="search-submit" class="waves-effect waves-light btn">Search<i class="material-icons right">search</i></a>
+    </div>
+</div>
+<div id="mtr-result">
+</div>
+{% end %}
+
+{% block extra_js %}
+<script type="text/javascript" src="/files/route.js"></script>
+{% end %}
+
+{% block extra_init %}
+$(document).ready(function(){
+$('.datepicker').datepicker();
+});
+$(document).ready(function(){
+$('.timepicker').timepicker();
+});
+$(document).ready(function(){
+  $("#search-submit").click(function(){
+    let t = new Date($("#record-date").val() + " " + $("#record-time").val()).getTime() / 1000;
+    if (getRoute("#mtr-result", '{{target_name}}', '{{node_name}}', t)) {
+        $("#mtr-result").empty();
+        $("#mtr-result").append('<div class="progress" style="margin-top: 64px"><div class="indeterminate"></div></div>');
+    }
+  });
+});
+{% end %}

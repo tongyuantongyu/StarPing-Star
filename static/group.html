@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}StarPing - {{group_sname}}{% end %}
+
+{% block nav %}
+<a id="nav-l1" href="#" class="breadcrumb bold-font">{{group_sname}}</a>
+{% end %}
+
+{% block body %}
+<div style="height: 16px"></div>
+<div class="row" style="margin-bottom: 0">
+    <div id="chart" class="col s12 auto-ratio"></div>
+</div>
+<div class="row" style="margin-bottom: 0">
+    <div id="span-select-container" class="input-field col s9 m4 l3">
+        <select id="show-span">
+            <option value="1" selected>1 Hour</option>
+            <option value="6">6 Hours</option>
+            <option value="12">12 Hours</option>
+            <option value="24">1 Day</option>
+            <option value="72">3 Days</option>
+            <option value="168">7 Days</option>
+        </select>
+        <label for="show-span">Select Span</label>
+    </div>
+    <div class="col s3 m2 l1" style="transform: translate(10px, 40%)">
+        <a class="btn-floating waves-effect waves-light" onclick="switchTarget(null, null)"><i class="material-icons">search</i></a>
+    </div>
+    <div class="col l2 offset-l4 m3 s6 jump-button">
+        <a class='dropdown-trigger btn waves-effect waves-light tooltipped' href='#' data-target='dropdown1'
+           style='display:block' data-position="top" data-tooltip="Choose Target">
+            Target<i class="material-icons right">list</i>
+        </a>
+        <ul id='dropdown1' class='dropdown-content'>
+            {% for name in groupv2list %}
+            <li><a href="#" onclick="switchTarget('{{name}}', '{{ping_targets[name][0]}}')">
+                {{ping_targets[name][0]}}
+            </a></li>
+            {% end %}
+        </ul>
+    </div>
+    <div class="col l2 m3 s6 jump-button">
+        <a class="waves-effect waves-light btn tooltipped" style='display:block' href="#" onclick="toDetail()"
+           data-position="top" data-tooltip="Check Detail Info">
+            Detail<i class="material-icons right">open_in_new</i>
+        </a>
+    </div>
+</div>
+{% end %}
+
+{% block extra_js %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts.min.js"></script>
+<script type="text/javascript" src="/files/charts.js"></script>
+{% end %}
+
+{% block extra_init %}
+let showing_target = '{{groupv2list[0]}}';
+let showing_target_sname = '{{ping_targets[groupv2list[0]][0]}}'
+let chartInstance;
+let intervalID;
+$(document).ready(function(){
+let a = setChartGlance("chart", null, null, showing_target, showing_target_sname, 1);
+intervalID = a[0];
+chartInstance = a[1];
+});
+
+function switchTarget(target_name, target_sname) {
+if (target_name == null) {
+target_name = showing_target;
+target_sname = showing_target_sname;
+}
+let span = document.getElementById("show-span").value;
+let a = setChartGlance("chart", chartInstance, intervalID, target_name, target_sname, span);
+intervalID = a[0];
+chartInstance = a[1];
+showing_target = target_name;
+showing_target_sname = target_sname;
+}
+
+function toDetail() {
+window.location = "/target/{{group_name}}/" + showing_target;
+}
+{% end %}
